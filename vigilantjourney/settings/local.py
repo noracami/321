@@ -1,7 +1,7 @@
 # vigilantjourney/settings/local.py
 
 from .base import *     # noqa
-import dj_database_url
+# import dj_database_url
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'rg1hqqj(nxq9b5@fmjp-e%(e_@ksma8bhmpe+z^cw^64n=zi#i'
