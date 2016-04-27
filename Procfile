@@ -1,0 +1,1 @@
+web: gunicorn vigilantjourney.wsgi --log-file -
