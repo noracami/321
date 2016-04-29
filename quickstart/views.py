@@ -21,6 +21,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
-def linebot():
+def linebot(request):
     print('test')
     return
