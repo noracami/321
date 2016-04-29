@@ -21,6 +21,13 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
+from django.http import HttpResponse
+
 def linebot(request):
     print('test')
-    return redirect('/')
+    response = HttpResponse(content_type='application/json; charset=UTF-8')
+    response['X-Line-ChannelID'] = ChannelID
+    response['X-Line-ChannelSecret'] = ChannelSecret
+    response['X-Line-Trusted-User-With-ACL'] = MID
+
+    return response
