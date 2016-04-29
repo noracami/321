@@ -9,6 +9,12 @@ DEBUG = True #False
 # 設定 secret key。
 SECRET_KEY = get_env_var('DJANGO_SECRET_KEY')
 
+###
+CHANNEL_ID = get_env_var('ChannelID')
+CHANNEL_SECRET = get_env_var('ChannelSecret')
+CHANNEL_MID = get_env_var('MID')
+###
+
 # 尊重 HTTPS 連線中的 "X-Forwarded-Proto" header。
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 

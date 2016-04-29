@@ -22,12 +22,13 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 from django.http import HttpResponse
+from vigilantjourney.settings.production_heroku import CHANNEL_ID, CHANNEL_SECRET, CHANNEL_MID
 
 def linebot(request):
     print('test')
     response = HttpResponse(content_type='application/json; charset=UTF-8')
-    response['X-Line-ChannelID'] = ChannelID
-    response['X-Line-ChannelSecret'] = ChannelSecret
-    response['X-Line-Trusted-User-With-ACL'] = MID
+    response['X-Line-ChannelID'] = CHANNEL_ID
+    response['X-Line-ChannelSecret'] = CHANNEL_SECRET
+    response['X-Line-Trusted-User-With-ACL'] = CHANNEL_MID
 
     return response
