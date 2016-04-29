@@ -31,4 +31,4 @@ def linebot(request):
     response['X-Line-ChannelSecret'] = CHANNEL_SECRET
     response['X-Line-Trusted-User-With-ACL'] = CHANNEL_MID
 
-    return response
+    return render(request, 'quickstart/base.html', {'response': response})
