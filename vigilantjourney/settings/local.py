@@ -6,6 +6,12 @@ from .base import *     # noqa
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'rg1hqqj(nxq9b5@fmjp-e%(e_@ksma8bhmpe+z^cw^64n=zi#i'
 
+###
+CHANNEL_ID = '1234567890'
+CHANNEL_SECRET = 'secret'
+CHANNEL_MID = '0123456789'
+###
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
