@@ -32,22 +32,75 @@ if os.environ['DJANGO_SETTINGS_MODULE'] == 'vigilantjourney.settings.local':
 elif os.environ['DJANGO_SETTINGS_MODULE'] == 'vigilantjourney.settings.production_heroku':
     from vigilantjourney.settings.production_heroku import CHANNEL_ID, CHANNEL_SECRET, CHANNEL_MID
 
+LINE_HEADERS = {
+    "X-Line-ChannelID": CHANNEL_ID,
+    "X-Line-ChannelSecret": CHANNEL_SECRET,
+    "X-Line-Trusted-User-With-ACL": CHANNEL_MID,
+    "Content-Type": 'application/json; charset=UTF-8',
+}
+
 def linebot(request):
-    print('test')
-    response = HttpResponse(content_type='application/json; charset=UTF-8')
-    response['X-Line-ChannelID'] = CHANNEL_ID
-    response['X-Line-ChannelSecret'] = CHANNEL_SECRET
-    response['X-Line-Trusted-User-With-ACL'] = CHANNEL_MID
+
+    """
+    Receiving messages/operations
+
+        Request specifications
+
+        HTTPS is used to access the BOT API server from the LINE
+        platform. The specifications for access requests are as follows.
+
+            Protocol: HTTPS
+            HTTP method: POST
+            Content type: application/json; charset=UTF-8
+            Target URL: URL registered on the Channel Console
+
+        Example:
+
+            POST /callback HTTP/1.1
+            HOST: YOUR_SERVER_HOST_NAME
+            Content-type: application/json; charset=UTF-8
+            X-LINE-ChannelSignature: /abcd1234+Ab/U=
+
+            {"result":[{...}, {...}]}
+
+    Sending messages
+    """
+
+    import urllib
+    import pprint
+
+    print(request)
+
+    pprint.pprint(request.body)
+    req = json.loads(request.body.decode('utf-8'))
+
+    pprint.pprint(request.POST)
+    #pprint.pprint(request.META)
+    pprint.pprint(req)
+
+    print('-*-*-*-*-')
+
+    if 'result' not in req:
+        print('There is no result in request.json')
+    else:
+        result = req['result']
+        for data in result:
+            if 'content' in data:
+                pprint.pprint('content: %s' % data['content'])
+            pprint.pprint(data)
+
+
+    #response = HttpResponse(content_type='application/json; charset=UTF-8')
+    #response['X-Line-ChannelID'] = CHANNEL_ID
+    #response['X-Line-ChannelSecret'] = CHANNEL_SECRET
+    #response['X-Line-Trusted-User-With-ACL'] = CHANNEL_MID
 
     #print(request.body)
 
-    req = json.loads(request.body.decode('utf-8'))
+    #req = json.loads(request.body.decode('utf-8'))
+    #pprint.pprint(req)
 
     #result = json.loads(request.readall().decode('utf-8'))
-
-    import pprint
-
-    pprint.pprint(req)
 
     #req['result'][0]['tesst'] = 'test'
     #received_json_data=json.loads(request.body)
@@ -60,7 +113,26 @@ def linebot(request):
 
     #print(received_json_data)
 
-    print('success')
     #return JsonResponse(data=req)
+
+    """
+    send messages to users from your BOT API server.
+
+    ---
+
+    Endpoint host: trialbot-api.line.me
+    Protocol: HTTPS
+    Required request header:{
+        X-Line-ChannelID: Channel ID
+        X-Line-ChannelSecret: Channel secret
+        X-Line-Trusted-User-With-ACL: MID (of Channel)
+    }
+
+
+    """
+
+    #r = requests.post(LINE_ENDPOINT + "/v1/events", data=json.dumps(data), headers=headers)
+
+    print('success')
     return HttpResponse(status=200)
     #return render(request, 'quickstart/base.html', {})
