@@ -33,6 +33,8 @@ if os.environ['DJANGO_SETTINGS_MODULE'] == 'vigilantjourney.settings.local':
 elif os.environ['DJANGO_SETTINGS_MODULE'] == 'vigilantjourney.settings.production_heroku':
     from vigilantjourney.settings.production_heroku import CHANNEL_ID, CHANNEL_SECRET, CHANNEL_MID
 
+LINE_ENDPOINT = 'https://trialbot-api.line.me'
+
 LINE_HEADERS = {
     "Content-Type": 'application/json; charset=UTF-8',
     "X-Line-ChannelID": CHANNEL_ID,
