@@ -33,10 +33,10 @@ elif os.environ['DJANGO_SETTINGS_MODULE'] == 'vigilantjourney.settings.productio
     from vigilantjourney.settings.production_heroku import CHANNEL_ID, CHANNEL_SECRET, CHANNEL_MID
 
 LINE_HEADERS = {
+    "Content-Type": 'application/json; charset=UTF-8',
     "X-Line-ChannelID": CHANNEL_ID,
     "X-Line-ChannelSecret": CHANNEL_SECRET,
     "X-Line-Trusted-User-With-ACL": CHANNEL_MID,
-    "Content-Type": 'application/json; charset=UTF-8',
 }
 
 def linebot(request):
@@ -89,6 +89,8 @@ def linebot(request):
                 pprint.pprint('content: %s' % data['content'])
             pprint.pprint(data)
 
+    sendTextMessage(data['content']['from'], data['content']['text'])
+
 
     #response = HttpResponse(content_type='application/json; charset=UTF-8')
     #response['X-Line-ChannelID'] = CHANNEL_ID
@@ -131,8 +133,27 @@ def linebot(request):
 
     """
 
-    #r = requests.post(LINE_ENDPOINT + "/v1/events", data=json.dumps(data), headers=headers)
-
-    print('success')
+    print('complete')
     return HttpResponse(status=200)
     #return render(request, 'quickstart/base.html', {})
+
+def sendTextMessage(sender, text):
+    '''
+    sendTextMessage
+    '''
+    text = 'Hello World.\n' + text
+    data = {
+        'to': [sender],
+        'toChannel': 1383378250, #Fixed value
+        'eventType': '138311608800106203', #Fixed value
+        'content': {
+            'contentType': 1, #Fixed value
+            'toType': 1, #To user
+            'text': text
+        }
+    }
+    print('send: ' % data)
+
+    r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=headers)
+    if r.status_code != requests.codes.ok:
+        pprint.pprint(r.status_code)
