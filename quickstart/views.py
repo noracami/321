@@ -160,3 +160,5 @@ def sendTextMessage(sender, text):
     r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
     if r.status_code != requests.codes.ok:
         pprint.pprint(r.status_code)
+        pprint.pprint(r.META)
+        pprint.pprint(r.body)
