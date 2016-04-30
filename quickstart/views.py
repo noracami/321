@@ -161,4 +161,4 @@ def sendTextMessage(sender, text):
     if r.status_code != requests.codes.ok:
         pprint.pprint(r.status_code)
         pprint.pprint(r.headers)
-        pprint.pprint(r.body)
+        pprint.pprint(r.text)
