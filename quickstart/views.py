@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from quickstart.serializers import UserSerializer, GroupSerializer
 
 import json
+import pprint
 import requests
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -70,7 +71,6 @@ def linebot(request):
     """
 
     import urllib
-    import pprint
 
     print(request)
 
