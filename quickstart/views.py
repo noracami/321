@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from quickstart.serializers import UserSerializer, GroupSerializer
 
 import json
+import requests
 
 class UserViewSet(viewsets.ModelViewSet):
     """
