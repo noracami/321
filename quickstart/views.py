@@ -44,7 +44,6 @@ LINE_HEADERS = {
 }
 
 def linebot(request):
-
     """
     Receiving messages/operations
 
@@ -68,77 +67,48 @@ def linebot(request):
             {"result":[{...}, {...}]}
 
     Sending messages
+
+        send messages to users from your BOT API server.
+
+        ---
+
+        Endpoint host: trialbot-api.line.me
+        Protocol: HTTPS
+        Required request header:{
+            X-Line-ChannelID: Channel ID
+            X-Line-ChannelSecret: Channel secret
+            X-Line-Trusted-User-With-ACL: MID (of Channel)
+        }
     """
 
     import urllib
-
-    print(request)
-
-    pprint.pprint(request.body)
     req = json.loads(request.body.decode('utf-8'))
-
-    pprint.pprint(request.POST)
-    #pprint.pprint(request.META)
     pprint.pprint(req)
-
     print('-*-*-*-*-')
 
     if 'result' not in req:
         print('There is no result in request.json')
+        return HttpResponse(status=470)
+    #Receiving messages/operations
     else:
-        result = req['result']
-        for data in result:
-            if 'content' in data:
-                pprint.pprint('content: %s' % data['content'])
-            pprint.pprint(data)
-
-    sendTextMessage(data['content']['from'], data['content']['text'])
-
-
-    #response = HttpResponse(content_type='application/json; charset=UTF-8')
-    #response['X-Line-ChannelID'] = CHANNEL_ID
-    #response['X-Line-ChannelSecret'] = CHANNEL_SECRET
-    #response['X-Line-Trusted-User-With-ACL'] = CHANNEL_MID
-
-    #print(request.body)
-
-    #req = json.loads(request.body.decode('utf-8'))
-    #pprint.pprint(req)
-
-    #result = json.loads(request.readall().decode('utf-8'))
-
-    #req['result'][0]['tesst'] = 'test'
-    #received_json_data=json.loads(request.body)
-
-    #if 'result' not in request.json:
-    #    print('There is no result in request.json')
-    #    return HttpResponse(status=470)
-    #for req in request.json['result']:
-    #    print(req)
-
-    #print(received_json_data)
-
-    #return JsonResponse(data=req)
-
-    """
-    send messages to users from your BOT API server.
-
-    ---
-
-    Endpoint host: trialbot-api.line.me
-    Protocol: HTTPS
-    Required request header:{
-        X-Line-ChannelID: Channel ID
-        X-Line-ChannelSecret: Channel secret
-        X-Line-Trusted-User-With-ACL: MID (of Channel)
-    }
-
-
-    """
-
+        for data in req['result']:
+            if 'content' not in data:
+                print('There is no content in result')
+                return HttpResponse(status=470)
+            #Received operation
+            if data['eventType'] == '138311609100106403':
+                uid = data['content']['params'][0]
+                text = 'Hello'
+            #Received message
+            elif data['eventType'] == '138311609100106303':
+                uid = data['content']['from']
+                text = data['content']['text']
+                if text is None:
+                    print('text is None')
+                    return HttpResponse(status=470)
+            sendTextMessage(uid, text)
     print('complete')
     return HttpResponse(status=200)
-    #return render(request, 'quickstart/base.html', {})
 
 def sendTextMessage(sender, text):
     '''
@@ -155,7 +125,8 @@ def sendTextMessage(sender, text):
             'text': text
         }
     }
-    print('send: ' % data)
+    print('send:')
+    pprint.pprint(data)
 
     r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
     if r.status_code != requests.codes.ok:
