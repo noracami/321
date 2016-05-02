@@ -43,6 +43,11 @@ LINE_HEADERS = {
     "X-Line-Trusted-User-With-ACL": CHANNEL_MID,
 }
 
+def apptest(request, params=None):
+    from .apps import QuickstartConfig
+    data = QuickstartConfig.tMID
+    return HttpResponse(data, status=200)
+
 def linebot(request):
     """
     Receiving messages/operations

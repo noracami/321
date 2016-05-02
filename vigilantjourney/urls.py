@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^callback$', views.linebot, name='linebot'),
+    url(r'^test$', views.apptest, name='apptest'),
 ]
