@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from quickstart.serializers import UserSerializer, GroupSerializer
 
+
 from django.http import HttpResponse
 
 import base64
@@ -29,13 +30,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
+from quickstart import LINE_HEADERS
 LINE_ENDPOINT = 'https://trialbot-api.line.me'
-LINE_HEADERS = {
-    "Content-Type": 'application/json; charset=UTF-8',
-    "X-Line-ChannelID": CHANNEL_ID,
-    "X-Line-ChannelSecret": CHANNEL_SECRET,
-    "X-Line-Trusted-User-With-ACL": CHANNEL_MID,
-}
 
 def apptest(request, params=None):
     from .apps import QuickstartConfig
