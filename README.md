@@ -1,4 +1,8 @@
-# Django Line Bot
+# Django Line Bot [![Build Status][id]][travis-ci]
+
+[id]: https://travis-ci.org/noracami/321.svg?branch=master
+
+[travis-ci]: https://travis-ci.org/noracami/321
 
 build LINE BOT API server with Django.
 
@@ -37,7 +41,7 @@ import line_bot
 
 # Reference
 
-[https://developers.line.me/bot-api/overview](LINE Developers-BOT API-Overview)
+[LINE developers - BOT API - Overview](https://developers.line.me/bot-api/overview)
 
 https://github.com/miaoski/amis-linebot
 
