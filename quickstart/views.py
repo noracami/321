@@ -85,6 +85,9 @@ def linebot(request):
         }
     """
 
+    pprint.pprint(request.META)
+    return HttpResponse(status=200)
+
     if 'X-LINE-ChannelSignature' '''not''' in request.META:
         print('There is a X-LINE-ChannelSignature')
 
