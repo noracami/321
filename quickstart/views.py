@@ -40,7 +40,7 @@ def apptest(request, params=None):
 
 def isValidChannelSignature(key, content, signature):
     print(signature)
-    calc = base64.b64encode(hmac.new(key.encode('utf-8'), content, digestmod=hashlib.sha256).digest())
+    calc = base64.b64encode(hmac.new(key, content, digestmod=hashlib.sha256).digest())
     print(calc)
     if calc != signature:
         return False
@@ -91,8 +91,8 @@ def linebot(request):
         print('There is a X-LINE-ChannelSignature')
 
     if not isValidChannelSignature(
-            LINE_HEADERS['X-Line-ChannelSecret'], request.body,
-            request.META['HTTP_X_LINE_CHANNELSIGNATURE']):
+            LINE_HEADERS['X-Line-ChannelSecret'].encode('utf-8'), request.body,
+            request.META['HTTP_X_LINE_CHANNELSIGNATURE'].encode('utf-8')):
         print('The request does not have a Valid Signature')
 
     req = json.loads(request.body.decode('utf-8'))
@@ -111,7 +111,7 @@ def linebot(request):
                 uid = data['content']['params'][0]
                 text = 'Hello'
             #Received message
-            elif data['eventType'] == '138311609100106303':
+            elif data['eventType'] == '138311609000106303':
                 uid = data['content']['from']
                 text = data['content']['text']
                 if text is None:
