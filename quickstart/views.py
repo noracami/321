@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from quickstart.serializers import UserSerializer, GroupSerializer
@@ -144,3 +145,56 @@ def sendTextMessage(sender, text):
         pprint.pprint(r.status_code)
         pprint.pprint(r.headers)
         pprint.pprint(r.text)
+
+def sendTextMessage(sender, text, e):
+    '''
+    sendTextMessage
+    '''
+    text = 'Hello from another World.\n' + text
+    data = {
+        'to': [sender],
+        'toChannel': 1383378250, #Fixed value
+        'eventType': '138311608800106203', #Fixed value
+        'content': {
+            'contentType': 1, #Text message, Fixed value
+            'toType': 1, #To user
+            'text': text
+        }
+    }
+    print('send:')
+    pprint.pprint(json.dumps(data))
+
+    r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
+    if r.status_code != requests.codes.ok:
+        pprint.pprint(r.status_code)
+        pprint.pprint(r.headers)
+        pprint.pprint(r.text)
+    return r
+
+
+@login_required(login_url='/api-auth/login/')
+def webconsole(request):
+    """
+    for develop usage
+    """
+
+    """********"""
+    """********"""
+
+    property_list = {
+        'M_DES_URL': '',
+        'M_TEXT': '',
+        'M_SENDER': '',
+    }
+
+    if request.method != 'POST':
+        return render(request, 'quickstart/webconsole.html', {'response': 'NONE', 'property_list': property_list})
+
+    for e in property_list:
+        if e not in request.POST:
+            property_list[e] = 'not exist'
+        else:
+            property_list[e] = request.POST[e]
+
+    response = sendTextMessage(property_list['M_SENDER'], property_list['M_TEXT'], 'sendTextMessage')
+    return render(request, 'quickstart/webconsole.html', {'response': response, 'property_list': property_list})
