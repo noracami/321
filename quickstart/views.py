@@ -40,7 +40,7 @@ def apptest(request, params=None):
 
 def isValidChannelSignature(key, content, signature):
     print(signature)
-    calc = base64.b64encode(hmac.new(key, content, digestmod=hashlib.sha256).digest())
+    calc = base64.b64encode(hmac.new(key.encode('utf-8'), content, digestmod=hashlib.sha256).digest())
     print(calc)
     if calc != signature:
         return False
