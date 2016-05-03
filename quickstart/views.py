@@ -137,7 +137,7 @@ def sendTextMessage(sender, text):
         }
     }
     print('send:')
-    pprint.pprint(json.loads(data))
+    pprint.pprint(json.dumps(data))
 
     r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
     if r.status_code != requests.codes.ok:
