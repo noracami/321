@@ -122,54 +122,54 @@ def linebot(request):
     print('complete')
     return HttpResponse(status=200)
 
-def sendTextMessage(sender, text):
-    '''
-    sendTextMessage
-    '''
-    text = 'Hello World.\n' + text
-    data = {
-        'to': [sender],
-        'toChannel': 1383378250, #Fixed value
-        'eventType': '138311608800106203', #Fixed value
-        'content': {
-            'contentType': 1, #Text message, Fixed value
-            'toType': 1, #To user
-            'text': text
+def sendTextMessage(sender, text, e=None):
+    if e is None:
+        '''
+        sendTextMessage
+        '''
+        text = 'Hello World.\n' + text
+        data = {
+            'to': [sender],
+            'toChannel': 1383378250, #Fixed value
+            'eventType': '138311608800106203', #Fixed value
+            'content': {
+                'contentType': 1, #Text message, Fixed value
+                'toType': 1, #To user
+                'text': text
+            }
         }
-    }
-    print('send:')
-    pprint.pprint(json.dumps(data))
+        print('send:')
+        pprint.pprint(json.dumps(data))
 
-    r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
-    if r.status_code != requests.codes.ok:
-        pprint.pprint(r.status_code)
-        pprint.pprint(r.headers)
-        pprint.pprint(r.text)
-
-def sendTextMessage(sender, text, e):
-    '''
-    sendTextMessage
-    '''
-    text = 'Hello from another World.\n' + text
-    data = {
-        'to': [sender],
-        'toChannel': 1383378250, #Fixed value
-        'eventType': '138311608800106203', #Fixed value
-        'content': {
-            'contentType': 1, #Text message, Fixed value
-            'toType': 1, #To user
-            'text': text
+        r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
+        if r.status_code != requests.codes.ok:
+            pprint.pprint(r.status_code)
+            pprint.pprint(r.headers)
+            pprint.pprint(r.text)
+    else:
+        '''
+        sendTextMessage
+        '''
+        text = 'Hello from another World.\n' + text
+        data = {
+            'to': [sender],
+            'toChannel': 1383378250, #Fixed value
+            'eventType': '138311608800106203', #Fixed value
+            'content': {
+                'contentType': 1, #Text message, Fixed value
+                'toType': 1, #To user
+                'text': text
+            }
         }
-    }
-    print('send:')
-    pprint.pprint(json.dumps(data))
+        print('send:')
+        pprint.pprint(json.dumps(data))
 
-    r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
-    if r.status_code != requests.codes.ok:
-        pprint.pprint(r.status_code)
-        pprint.pprint(r.headers)
-        pprint.pprint(r.text)
-    return r
+        r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
+        if r.status_code != requests.codes.ok:
+            pprint.pprint(r.status_code)
+            pprint.pprint(r.headers)
+            pprint.pprint(r.text)
+        return r
 
 
 @login_required(login_url='/api-auth/login/')
