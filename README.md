@@ -2,11 +2,20 @@
 
 build LINE BOT API server with Django.
 
----
-
 # Overview
 
----
+1. To develop a BOT API server, you must create a BOT API account from the [LINE Business Center](https://business.line.me/).
+
+2. Register a callback URL
+
+    example: `https://xxxxxx.herokuapp.com:443/callback`
+
+    > ps. you also need to set Server IP Whitelist.
+    >     you can add Fixie to get static IP.
+
+3. Receiving messages/operations
+
+4. Sending messages
 
 # Requirements
 
@@ -17,20 +26,18 @@ build LINE BOT API server with Django.
 
 # Example
 
-0. To develop a BOT API server, you must create a BOT API account from the [LINE Business Center](https://business.line.me/).
+> NOT Implement
 
-1. Register a callback URL
+```python
+import line_bot
 
-    example: `https://xxxxxx.herokuapp.com:443/callback`
+```
 
-    > ps. you also need to set Server IP Whitelist.
-    >     you can add Fixie to get static IP.
-
-2. Receiving messages/operations
-
-3. Sending messages
+# TODO
 
 # Reference
+
+[https://developers.line.me/bot-api/overview](LINE Developers-BOT API-Overview)
 
 https://github.com/miaoski/amis-linebot
 
