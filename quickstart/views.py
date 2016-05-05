@@ -110,7 +110,13 @@ def linebot(request):
             #Received operation
             if data['eventType'] == '138311609100106403':
                 uid = data['content']['params'][0]
-                text = 'Hello'
+                #Added as friend or canceling block
+                if data['content']['opType'] == 4:
+                    text = 'Hello'
+                #Blocked account)
+                elif data['content']['opType'] == 8:
+                    print('user %s has block you.' % uid)
+                    return HttpResponse(status=200)
             #Received message
             elif data['eventType'] == '138311609000106303':
                 uid = data['content']['from']
@@ -122,54 +128,41 @@ def linebot(request):
     print('complete')
     return HttpResponse(status=200)
 
-def sendTextMessage(sender, text, e=None):
-    if e is None:
+def sendTextMessage(sender, text, case=None):
+    if case is None:
         '''
         sendTextMessage
         '''
         text = 'Hello World.\n' + text
-        data = {
-            'to': [sender],
-            'toChannel': 1383378250, #Fixed value
-            'eventType': '138311608800106203', #Fixed value
-            'content': {
-                'contentType': 1, #Text message, Fixed value
-                'toType': 1, #To user
-                'text': text
-            }
-        }
-        print('send:')
-        pprint.pprint(json.dumps(data))
-
-        r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
-        if r.status_code != requests.codes.ok:
-            pprint.pprint(r.status_code)
-            pprint.pprint(r.headers)
-            pprint.pprint(r.text)
-    else:
+    elif case == 'instruction':
+        text = 'Welcome to 9453!'
+        pass
+    elif case == 'send_from_webconsole':
         '''
         sendTextMessage
         '''
         text = 'Hello from another World.\n' + text
-        data = {
-            'to': [sender],
-            'toChannel': 1383378250, #Fixed value
-            'eventType': '138311608800106203', #Fixed value
-            'content': {
-                'contentType': 1, #Text message, Fixed value
-                'toType': 1, #To user
-                'text': text
-            }
+    else:
+        return HttpResponse(status=470)
+    data = {
+        'to': [sender],
+        'toChannel': 1383378250, #Fixed value
+        'eventType': '138311608800106203', #Fixed value
+        'content': {
+            'contentType': 1, #Text message, Fixed value
+            'toType': 1, #To user
+            'text': text
         }
-        print('send:')
-        pprint.pprint(json.dumps(data))
+    }
+    print('send:')
+    pprint.pprint(json.dumps(data))
 
-        r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
-        if r.status_code != requests.codes.ok:
-            pprint.pprint(r.status_code)
-            pprint.pprint(r.headers)
-            pprint.pprint(r.text)
-        return r
+    r = requests.post(LINE_ENDPOINT + '/v1/events', data=json.dumps(data), headers=LINE_HEADERS)
+    if r.status_code != requests.codes.ok:
+        pprint.pprint(r.status_code)
+        pprint.pprint(r.headers)
+        pprint.pprint(r.text)
+    return r if case == 'send_from_webconsole' else 0
 
 
 @login_required(login_url='/api-auth/login/')
@@ -196,5 +189,5 @@ def webconsole(request):
         else:
             property_list[e] = request.POST[e]
 
-    response = sendTextMessage(property_list['M_SENDER'], property_list['M_TEXT'], 'sendTextMessage')
+    response = sendTextMessage(property_list['M_SENDER'], property_list['M_TEXT'], 'send_from_webconsole')
     return render(request, 'quickstart/webconsole.html', {'response': response, 'property_list': property_list})
