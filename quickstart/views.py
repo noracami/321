@@ -40,10 +40,10 @@ def apptest(request, params=None):
     return HttpResponse(data, status=200)
 
 def isValidChannelSignature(key, content, signature):
-    print(signature)
     calc = base64.b64encode(hmac.new(key, content, digestmod=hashlib.sha256).digest())
-    print(calc)
     if calc != signature:
+        print('received: %s' % signature)
+        print('calculate: %s' % calc)
         return False
     else:
         return True
@@ -88,8 +88,11 @@ def linebot(request):
 
     #pprint.pprint(request.META)
 
-    if 'HTTP_X_LINE_CHANNELSIGNATURE' '''not''' in request.META:
-        print('There is a X-LINE-ChannelSignature')
+    #WSGIRequest append HTTP_ to headers
+    if 'HTTP_X_LINE_CHANNELSIGNATURE' not in request.META:
+        print('No X-LINE-ChannelSignature')
+    else:
+        print('There is a ChannelSignature: %s...' % request.META['HTTP_X_LINE_CHANNELSIGNATURE'][:8])
 
     if not isValidChannelSignature(
             LINE_HEADERS['X-Line-ChannelSecret'].encode('utf-8'), request.body,
@@ -125,9 +128,11 @@ def linebot(request):
                 if text is None:
                     print('text is None')
                     return HttpResponse(status=470)
-            sendTextMessage(uid, text)
-    print('complete')
-    return HttpResponse(status=200)
+                sendTextMessage(uid, text)
+            else:
+                print('unknown eventType!')
+                return HttpResponse(status=470)
+        return HttpResponse(status=200)
 
 def sendTextMessage(sender, text, case=None):
     if case is None:
@@ -165,8 +170,10 @@ def sendTextMessage(sender, text, case=None):
         pprint.pprint(r.status_code)
         pprint.pprint(r.headers)
         pprint.pprint(r.text)
-    return r if case == 'send_from_webconsole' else 0
-
+    if case == 'send_from_webconsole':
+        return r
+    else:
+        print('complete')
 
 @login_required(login_url='/api-auth/login/')
 def webconsole(request):
