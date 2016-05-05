@@ -112,7 +112,8 @@ def linebot(request):
                 uid = data['content']['params'][0]
                 #Added as friend or canceling block
                 if data['content']['opType'] == 4:
-                    text = 'Hello'
+                    text = 'Welcome to 9453!'
+                    sendTextMessage(uid, text, 'instruction')
                 #Blocked account)
                 elif data['content']['opType'] == 8:
                     print('user %s has block you.' % uid)
@@ -135,7 +136,9 @@ def sendTextMessage(sender, text, case=None):
         '''
         text = 'Hello World.\n' + text
     elif case == 'instruction':
-        text = 'Welcome to 9453!'
+        '''
+        send instruction for use
+        '''
         pass
     elif case == 'send_from_webconsole':
         '''
