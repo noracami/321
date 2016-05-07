@@ -128,11 +128,20 @@ def linebot(request):
                 if text is None:
                     print('text is None')
                     return HttpResponse(status=470)
-                sendTextMessage(uid, text)
+                #TODO
+                parseTextMessage(uid, text)
+                #sendTextMessage(uid, text)
             else:
                 print('unknown eventType!')
                 return HttpResponse(status=470)
         return HttpResponse(status=200)
+
+def parseTextMessage(sender, text, case=None):
+
+    if case == 'send_from_webconsole':
+        return sendTextMessage(sender, text, case)
+    else:
+        sendTextMessage(sender, text, case)
 
 def sendTextMessage(sender, text, case=None):
     if case is None:
@@ -199,5 +208,5 @@ def webconsole(request):
         else:
             property_list[e] = request.POST[e]
 
-    response = sendTextMessage(property_list['M_SENDER'], property_list['M_TEXT'], 'send_from_webconsole')
+    response = parseTextMessage(property_list['M_SENDER'], property_list['M_TEXT'], 'send_from_webconsole')
     return render(request, 'quickstart/webconsole.html', {'response': response, 'property_list': property_list})
