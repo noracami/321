@@ -2,6 +2,48 @@ from bs4 import BeautifulSoup
 import requests
 
 
+class PriceInvestigator():
+    """docstring for PriceInvestigator"""
+    def __init__(self, *arg):
+        print('__init__')
+        self.arg = arg
+
+    def askTAAZE(self, book):
+        url = 'http://www.taaze.tw/search_go.html'
+        payload = {'keyType[]': 0, 'keyword[]': book}
+        r = requests.get(url=url, params=payload)
+        soup = BeautifulSoup(r.text, "html.parser")
+        div_searchresult_row = soup.find_all("div", "searchresult_row")
+        results = []
+        for tag in div_searchresult_row:
+            results.append(tag.a)
+        info = {}
+        for a_tag in results:
+            r = requests.get(a_tag['href'])
+            soup = BeautifulSoup(r.text, "html.parser")
+            n = soup.find(id='prodInfo3')('li')
+            label = ['author', 'price', 'discount_price', 'moneyback', 'discount_deadline', 'delivery', 'location', 'availability', 'otherversion']
+            value = []
+            for x in n:
+                text = x.text.replace('\n', '')
+                if text == '':
+                    pass
+                else:
+                    value.append(text)
+            c = dict(zip(label, value))
+            info[a_tag.text] = c
+        return info
+
+    def price(self, book):
+        result = []
+        result.append(self.askTAAZE(book))
+        return result
+
+    #from quickstart.price import PriceInvestigator
+    #a = PriceInvestigator()
+    #output = a.price(<book>)
+
+
 def lookupPrice(book):
     """
     lookupPrice
@@ -307,24 +349,3 @@ def lookupPrice(book):
             'addMarkFlg': 0,
         }
     }
-
-    for store in [TAAZE,]:
-        print("store['url'] + store['search_url']",store['url'] + store['search_url'])
-        #pprint.pprint("params=store['search_payload']",store['search_payload'])
-        #pprint.pprint(store['search_payload'])
-        #r = requests.get(store['url'] + store['search_url'], params=store['search_payload'])
-
-    pass
-
-def searchTAAZE(book, config):
-    config['search_payload']['keyword[]'] = book
-    config['search_payload']['publishDateStart'] = config['search_payload']['publishDateEnd'] = None
-
-    url = config['url'] + config['search_url']
-    payload = config['search_payload']
-    r = requests.get(url, params=payload)
-    soup = BeautifulSoup(r.text, "html.parser")
-    div_searchresult_row = soup.find_all("div", "searchresult_row")
-    for e in div_searchresult_row:
-        print(e)
-
