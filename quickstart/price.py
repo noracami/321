@@ -2,11 +2,28 @@ from bs4 import BeautifulSoup
 import requests
 
 
-def lookupPrice(store, book):
+def lookupPrice(book):
+    """
+    lookupPrice
+    """
+
     TAAZE = {
         'name': 'TAAZE 讀冊生活',
         'url': 'http://www.taaze.tw',
         'search_url': '/search_go.html',
+        # keyword[]
+        # keyType[]
+        # prodKind
+        # prodCatId
+        # catId
+        # salePriceStart
+        # salePriceEnd
+        # saleDiscStart
+        # saleDiscEnd
+        # publishDateStart
+        # publishDateEnd
+        # prodRank
+        # addMarkFlg
         'search_payload': {
             #combined with +
             'keyword[]': '',
@@ -290,4 +307,24 @@ def lookupPrice(store, book):
             'addMarkFlg': 0,
         }
     }
+
+    for store in [TAAZE,]:
+        print("store['url'] + store['search_url']",store['url'] + store['search_url'])
+        #pprint.pprint("params=store['search_payload']",store['search_payload'])
+        #pprint.pprint(store['search_payload'])
+        #r = requests.get(store['url'] + store['search_url'], params=store['search_payload'])
+
     pass
+
+def searchTAAZE(book, config):
+    config['search_payload']['keyword[]'] = book
+    config['search_payload']['publishDateStart'] = config['search_payload']['publishDateEnd'] = None
+
+    url = config['url'] + config['search_url']
+    payload = config['search_payload']
+    r = requests.get(url, params=payload)
+    soup = BeautifulSoup(r.text, "html.parser")
+    div_searchresult_row = soup.find_all("div", "searchresult_row")
+    for e in div_searchresult_row:
+        print(e)
+
