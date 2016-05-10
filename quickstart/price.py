@@ -3,7 +3,13 @@ import requests
 
 
 class PriceInvestigator():
-    """docstring for PriceInvestigator"""
+    """docstring for PriceInvestigator
+
+    Usage:
+        from quickstart.price import PriceInvestigator
+        a = PriceInvestigator()
+        output = a.price(<book>)
+    """
     def __init__(self, *arg):
         print('__init__')
         self.arg = arg
@@ -39,9 +45,17 @@ class PriceInvestigator():
         result.append(self.askTAAZE(book))
         return result
 
-    #from quickstart.price import PriceInvestigator
-    #a = PriceInvestigator()
-    #output = a.price(<book>)
+class ATest(object):
+    """docstring for ATest"""
+    def __init__(self, *arg):
+        super(ATest, self).__init__()
+        self.arg = arg
+
+    def b(self):
+        self.a()
+
+    def a(self):
+        print('a')
 
 
 def lookupPrice(book):
