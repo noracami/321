@@ -24,8 +24,8 @@ class PriceInvestigator():
         for tag in div_searchresult_row:
             results.append(tag.a)
         info = {}
-        for a_tag in results:
-            r = requests.get(a_tag['href'])
+        for a_tag in results[:3]:
+            r = requests.get(url=a_tag['href'])
             soup = BeautifulSoup(r.text, "html.parser")
             n = soup.find(id='prodInfo3')('li')
             label = ['author', 'price', 'discount_price', 'moneyback', 'discount_deadline', 'delivery', 'location', 'availability', 'otherversion']
@@ -43,6 +43,7 @@ class PriceInvestigator():
     def price(self, book):
         result = []
         result.append(self.askTAAZE(book))
+        #result.append(self.ask_Another_Bookstore(book))
         return result
 
 class ATest(object):
