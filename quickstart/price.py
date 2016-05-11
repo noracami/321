@@ -13,38 +13,79 @@ class PriceInvestigator():
     def __init__(self, *arg):
         print('__init__')
         self.arg = arg
+        self.TAAZE = None
+
+    def clear(self):
+        self.TAAZE = None
 
     def askTAAZE(self, book):
+        info = {}
         url = 'http://www.taaze.tw/search_go.html'
         payload = {'keyType[]': 0, 'keyword[]': book}
         r = requests.get(url=url, params=payload)
         soup = BeautifulSoup(r.text, "html.parser")
         div_searchresult_row = soup.find_all("div", "searchresult_row")
-        results = []
+        results = {
+            'default': [],
+            '(二手書)': [],
+            '(電子書PDF版)': [],
+        }
         for tag in div_searchresult_row:
-            results.append(tag.a)
-        info = {}
-        for a_tag in results[:3]:
+            case = tag.find("li", "linkC").text.split('\xa0')[1]
+            if case == '':
+                results['default'].append(tag.a)
+            else:
+                results[case].append(tag.a)
+        print(results)
+        for a_tag in results['default'][:3]:
             r = requests.get(url=a_tag['href'])
+            print("get(url=%s)" % a_tag['href'])
+            if r.status_code != requests.codes.ok:
+                info['status_code'] = r.status_code
+                info['headers'] = r.headers
+                info['text'] = r.text
+                return info
             soup = BeautifulSoup(r.text, "html.parser")
             n = soup.find(id='prodInfo3')('li')
-            label = ['author', 'price', 'discount_price', 'moneyback', 'discount_deadline', 'delivery', 'location', 'availability', 'otherversion']
-            value = []
+
+            #TODO
+            #
+            #need more explicit for parse product columns
+            label = ['link', 'author', 'price', 'discount_price', 'moneyback', 'discount_deadline', 'delivery', 'location', 'availability', 'otherversion']
+            value = [a_tag['href']]
             for x in n:
                 text = x.text.replace('\n', '')
                 if text == '':
                     pass
                 else:
                     value.append(text)
+            #
+            #
+            #
             c = dict(zip(label, value))
             info[a_tag.text] = c
-        return info
+        self.TAAZE = info
 
-    def price(self, book):
-        result = []
-        result.append(self.askTAAZE(book))
-        #result.append(self.ask_Another_Bookstore(book))
-        return result
+    def price(self, book=None):
+        if book:
+            print(book)
+            self.askTAAZE(book)
+        if self.TAAZE == None:
+            print("We can not find the price.")
+            print('Maybe you can try this:')
+            print("1) price('Python')\nor")
+            print("2) askTAAZE('Python')\n    price()")
+            return
+        for x in self.TAAZE:
+            #TODO
+            #
+            #check if those keys have exist
+            print('書名：', x)
+            print('定價：', self.TAAZE[x]['price'])
+            print('優惠價：', self.TAAZE[x]['discount_price'])
+            print(self.TAAZE[x]['discount_deadline'])
+            print('數量：', self.TAAZE[x]['delivery'])
+            print('連結：', self.TAAZE[x]['link'])
 
 class ATest(object):
     """docstring for ATest"""
