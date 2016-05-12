@@ -11,13 +11,18 @@ class PriceInvestigator():
         a = PriceInvestigator()
         output = a.price(<book>)
     """
-    def __init__(self, *arg):
+    def __init__(self, test=False):
         print('__init__')
-        self.arg = arg
         self.TAAZE = None
+        if test:
+            self.price()
+            self.price('Python')
+            self.clear()
+            self.price()
 
     def clear(self):
         self.TAAZE = None
+        print('Clear results')
 
     def askTAAZE(self, book, number=3):
         info = {}
@@ -37,7 +42,6 @@ class PriceInvestigator():
                 results['default'].append(tag.a)
             else:
                 results[case].append(tag.a)
-        pprint.pprint(results)
         print('querying books...')
         for a_tag in results['default'][:number]:
             r = requests.get(url=a_tag['href'])
@@ -49,22 +53,21 @@ class PriceInvestigator():
                 return info
             soup = BeautifulSoup(r.text, "html.parser")
             n = soup.find(id='prodInfo3')('li')
-
-            #TODO
-            #
-            #need more explicit for parse product columns
-            label = ['link', 'author', 'price', 'discount_price', 'moneyback', 'discount_deadline', 'delivery', 'location', 'availability', 'otherversion']
-            value = [a_tag['href']]
+            label = ['網址', '作者', '定價', '優惠價', '現金回饋',
+                     '優惠截止日', '運送方式', '銷售地區', '庫存',
+                     '配送方式', '其他版本']
+            value = [a_tag['href']] + [''] * (len(label) - 1)
+            c = dict(zip(label, value))
             for x in n:
                 text = x.text.replace('\n', '')
-                if text == '':
+                if '：' in text:
+                    key = text.split('：')[0]
+                    c[key] = text
+                elif text == '':
                     pass
                 else:
-                    value.append(text)
-            #
-            #
-            #
-            c = dict(zip(label, value))
+                    key = '庫存'
+                    c[key] = text
             info[a_tag.text] = c
         self.TAAZE = info
 
@@ -73,21 +76,27 @@ class PriceInvestigator():
             print(book)
             self.askTAAZE(book)
         if self.TAAZE == None:
-            print("We can not find the price.")
-            print('Maybe you can try this:')
-            print("1) price('Python')\nor")
-            print("2) askTAAZE('Python')\n   price()")
+            msg = [
+                'We can not find the price.',
+                'Maybe you can try this:',
+                "1) price('Python')",
+                'or',
+                "2) askTAAZE('Python')",
+                '   price()',
+            ]
+            print('\n'.join(msg))
             return
         for x in self.TAAZE:
-            #TODO
+            #
+            #  TODO  #
             #
             #check if those keys have exist
             print('書名：', x)
-            print('定價：', self.TAAZE[x]['price'])
-            print('優惠價：', self.TAAZE[x]['discount_price'])
-            print(self.TAAZE[x]['discount_deadline'])
-            print('數量：', self.TAAZE[x]['delivery'])
-            print('連結：', self.TAAZE[x]['link'])
+            print(self.TAAZE[x]['定價'])
+            print(self.TAAZE[x]['優惠價'])
+            print(self.TAAZE[x]['優惠截止日'])
+            print(self.TAAZE[x]['庫存'])
+            print(self.TAAZE[x]['網址'])
 
 class ATest(object):
     """docstring for ATest"""
