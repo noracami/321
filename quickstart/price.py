@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import pprint
 
 
 class PriceInvestigator():
@@ -18,7 +19,7 @@ class PriceInvestigator():
     def clear(self):
         self.TAAZE = None
 
-    def askTAAZE(self, book):
+    def askTAAZE(self, book, number=3):
         info = {}
         url = 'http://www.taaze.tw/search_go.html'
         payload = {'keyType[]': 0, 'keyword[]': book}
@@ -36,8 +37,9 @@ class PriceInvestigator():
                 results['default'].append(tag.a)
             else:
                 results[case].append(tag.a)
-        print(results)
-        for a_tag in results['default'][:3]:
+        pprint.pprint(results)
+        print('querying books...')
+        for a_tag in results['default'][:number]:
             r = requests.get(url=a_tag['href'])
             print("get(url=%s)" % a_tag['href'])
             if r.status_code != requests.codes.ok:
@@ -74,7 +76,7 @@ class PriceInvestigator():
             print("We can not find the price.")
             print('Maybe you can try this:')
             print("1) price('Python')\nor")
-            print("2) askTAAZE('Python')\n    price()")
+            print("2) askTAAZE('Python')\n   price()")
             return
         for x in self.TAAZE:
             #TODO
