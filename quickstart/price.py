@@ -11,14 +11,8 @@ class PriceInvestigator():
         a = PriceInvestigator()
         output = a.price(<book>)
     """
-    def __init__(self, test=False):
-        print('__init__')
+    def __init__(self):
         self.TAAZE = None
-        if test:
-            self.price()
-            self.price('Python')
-            self.clear()
-            self.price()
 
     def clear(self):
         self.TAAZE = None
@@ -71,44 +65,36 @@ class PriceInvestigator():
             info[a_tag.text] = c
         self.TAAZE = info
 
-    def price(self, book=None):
+    def price(self, book=None, debug=False):
         if book:
             print(book)
             self.askTAAZE(book)
         if self.TAAZE == None:
             msg = [
-                'We can not find the price.',
-                'Maybe you can try this:',
+                "We can not find the price.",
+                "Maybe you can try this:",
                 "1) price('Python')",
-                'or',
+                "or",
                 "2) askTAAZE('Python')",
-                '   price()',
+                "   price()",
             ]
             print('\n'.join(msg))
             return
+
         for x in self.TAAZE:
             #
             #  TODO  #
             #
             #check if those keys have exist
-            print('書名：', x)
-            print(self.TAAZE[x]['定價'])
-            print(self.TAAZE[x]['優惠價'])
-            print(self.TAAZE[x]['優惠截止日'])
-            print(self.TAAZE[x]['庫存'])
-            print(self.TAAZE[x]['網址'])
-
-class ATest(object):
-    """docstring for ATest"""
-    def __init__(self, *arg):
-        super(ATest, self).__init__()
-        self.arg = arg
-
-    def b(self):
-        self.a()
-
-    def a(self):
-        print('a')
+            if debug:
+                print('書名：', x)
+                print(self.TAAZE[x]['定價'])
+                print(self.TAAZE[x]['優惠價'])
+                print(self.TAAZE[x]['優惠截止日'])
+                print(self.TAAZE[x]['庫存'])
+                print(self.TAAZE[x]['網址'])
+            else:
+                print('書名：', x, self.TAAZE[x]['定價'], self.TAAZE[x]['優惠價'])
 
 
 def lookupPrice(book):
