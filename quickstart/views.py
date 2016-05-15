@@ -140,6 +140,8 @@ def parseTextMessage(sender, text, case=None):
 
     if case == 'send_from_webconsole':
         return sendTextMessage(sender, text, case)
+    elif 'book' in text:
+        sendTextMessage(sender, text, 'book')
     else:
         sendTextMessage(sender, text, case)
 
@@ -159,6 +161,12 @@ def sendTextMessage(sender, text, case=None):
         sendTextMessage
         '''
         text = 'Hello from another World.\n' + text
+    elif case == 'book':
+        '''
+        prepare to  find the price of the book
+        #import price.py
+        '''
+        text = "let's find the book"
     else:
         return HttpResponse(status=470)
     data = {
