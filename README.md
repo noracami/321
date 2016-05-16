@@ -1,4 +1,4 @@
-# Django Line Bot [![Build Status][id]][travis-ci]
+# Django Line Bot [![Build Status][id]][travis-ci][![Requirements Status](https://requires.io/github/noracami/321/requirements.svg?branch=master)](https://requires.io/github/noracami/321/requirements/?branch=master)
 
 [id]: https://travis-ci.org/noracami/321.svg?branch=master
 
