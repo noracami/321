@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from quickstart.serializers import UserSerializer, GroupSerializer
-
+from quickstart.serializers import UserSerializer, GroupSerializer, FriendSerializer
+from quickstart.models import Friend
 
 from django.http import HttpResponse
 
@@ -30,6 +30,12 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+class FriendViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows friends to be viewed or edited.
+    """
+    queryset = Friend.objects.all()
+    serializer_class = FriendSerializer
 
 from quickstart import LINE_HEADERS
 LINE_ENDPOINT = 'https://trialbot-api.line.me'
@@ -93,11 +99,10 @@ def linebot(request):
         print('No X-LINE-ChannelSignature')
     else:
         print('There is a ChannelSignature: %s...' % request.META['HTTP_X_LINE_CHANNELSIGNATURE'][:8])
-
-    if not isValidChannelSignature(
-            LINE_HEADERS['X-Line-ChannelSecret'].encode('utf-8'), request.body,
-            request.META['HTTP_X_LINE_CHANNELSIGNATURE'].encode('utf-8')):
-        print('The request does not have a Valid Signature')
+        if not isValidChannelSignature(
+                LINE_HEADERS['X-Line-ChannelSecret'].encode('utf-8'), request.body,
+                request.META['HTTP_X_LINE_CHANNELSIGNATURE'].encode('utf-8')):
+            print('The request does not have a Valid Signature')
 
     req = json.loads(request.body.decode('utf-8'))
 
@@ -106,6 +111,7 @@ def linebot(request):
         return HttpResponse(status=470)
     #Receiving messages/operations
     else:
+        line_friends_need_ask_name = []
         for data in req['result']:
             if 'content' not in data:
                 print('There is no content in result')
@@ -115,6 +121,13 @@ def linebot(request):
                 uid = data['content']['params'][0]
                 #Added as friend or canceling block
                 if data['content']['opType'] == 4:
+                    if Friend.objects.filter(mid=uid):
+                        yy = get_object_or_404(Friend, mid=uid)
+                    else:
+                        yy = Friend(mid=uid)
+                        yy.save()
+                    if not yy.was_edited_recently(days=7) or yy.name == 'username':
+                        line_friends_need_ask_name += [uid]
                     text = 'Welcome to 9453!'
                     sendTextMessage(uid, text, 'instruction')
                 #Blocked account)
@@ -134,7 +147,22 @@ def linebot(request):
             else:
                 print('unknown eventType!')
                 return HttpResponse(status=470)
+        if len(line_friends_need_ask_name) > 0:
+            mids = line_friends_need_ask_name
+            askName(mids)
         return HttpResponse(status=200)
+
+def askName(mids):
+    payload = {
+        'mids' : mids,
+    }
+    r = requests.get(LINE_ENDPOINT + '/v1/profiles', params=payload, headers=LINE_HEADERS)
+    users = json.loads(r.text)['contacts']
+    for user in users:
+        name = user['displayName']
+        friend = get_object_or_404(Friend, mid=user['mid'])
+        friend.name = name
+        friend.save()
 
 def parseTextMessage(sender, text, case=None):
 

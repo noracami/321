@@ -15,5 +15,5 @@ class Friend(models.Model):
     def __str__(self):
         return '%s(%s)' % (self.name, self.mid)
 
-    def was_edited_recently(self):
-        return self.edit_time >= timezone.now() - datetime.timedelta(days=7)
+    def was_edited_recently(self, days=7):
+        return self.edit_time >= timezone.now() - datetime.timedelta(days=days)
