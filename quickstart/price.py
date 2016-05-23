@@ -81,6 +81,7 @@ class PriceInvestigator():
             print('\n'.join(msg))
             return
 
+        results = []
         for x in self.TAAZE:
             #
             #  TODO  #
@@ -94,7 +95,9 @@ class PriceInvestigator():
                 print(self.TAAZE[x]['庫存'])
                 print(self.TAAZE[x]['網址'])
             else:
-                print('書名：', x, self.TAAZE[x]['定價'], self.TAAZE[x]['優惠價'])
+                results = ['書名： %s %s %s' % (x, self.TAAZE[x]['定價'], self.TAAZE[x]['優惠價'])]
+                print(results[~0])
+        return results if results != [] else 'no result.'
 
 
 def lookupPrice(book):
