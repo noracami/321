@@ -30,6 +30,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+
 class FriendViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows friends to be viewed or edited.
@@ -92,8 +93,6 @@ def linebot(request):
         }
     """
 
-    #pprint.pprint(request.META)
-
     #WSGIRequest append HTTP_ to headers
     if 'HTTP_X_LINE_CHANNELSIGNATURE' not in request.META:
         print('No X-LINE-ChannelSignature')
@@ -126,9 +125,9 @@ def linebot(request):
                     else:
                         yy = Friend(mid=uid)
                         yy.save()
-                    if not yy.was_edited_recently(days=7) or yy.name == 'username':
-                        line_friends_need_ask_name += [uid]
-                    text = 'Welcome to 9453!'
+                    if not yy.was_edited_recently(days=1) or yy.name == 'username':
+                        askName([uid])
+                    text = '%s, Welcome to 9453!' % yy.name
                     sendTextMessage(uid, text, 'instruction')
                 #Blocked account)
                 elif data['content']['opType'] == 8:
@@ -147,9 +146,6 @@ def linebot(request):
             else:
                 print('unknown eventType!')
                 return HttpResponse(status=470)
-        if len(line_friends_need_ask_name) > 0:
-            mids = line_friends_need_ask_name
-            askName(mids)
         return HttpResponse(status=200)
 
 def askName(mids):
@@ -183,7 +179,7 @@ def sendTextMessage(sender, text, case=None):
         '''
         send instruction for use
         '''
-        pass
+        text = "try 'book <something you like>'"
     elif case == 'send_from_webconsole':
         '''
         sendTextMessage
@@ -192,9 +188,14 @@ def sendTextMessage(sender, text, case=None):
     elif case == 'book':
         '''
         prepare to  find the price of the book
-        #import price.py
         '''
-        text = "let's find the book"
+        from quickstart.price import PriceInvestigator
+        s_text = "let's find the book"
+        sendTextMessage(sender, s_text)
+        book = text.split('book')[1]
+        a = PriceInvestigator()
+        a.askTAAZE(self, book, number=1)
+        text = a.price()
     else:
         return HttpResponse(status=470)
     data = {
