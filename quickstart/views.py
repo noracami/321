@@ -191,12 +191,12 @@ def sendTextMessage(sender, text, case=None):
         '''
         from quickstart.price import PriceInvestigator
         s_text = "let's find the book"
-        sendTextMessage(sender, s_text)
         book = text.split('book')[1]
         print(book)
         a = PriceInvestigator()
         a.askTAAZE(book, number=1)
         text = a.price()
+        sendTextMessage(sender, s_text)
     else:
         return HttpResponse(status=470)
     data = {
