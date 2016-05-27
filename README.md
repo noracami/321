@@ -1,8 +1,12 @@
-# Django Line Bot [![Build Status][id]][travis-ci] [![Requirements Status](https://requires.io/github/noracami/321/requirements.svg?branch=master)](https://requires.io/github/noracami/321/requirements/?branch=master)
+# Django Line Bot [![Build Status][id]][travis-ci] [![Requirements Status][rid]][requires-io]
 
 [id]: https://travis-ci.org/noracami/321.svg?branch=master
 
 [travis-ci]: https://travis-ci.org/noracami/321
+
+[rid]: https://requires.io/github/noracami/321/requirements.svg?branch=master
+
+[requires-io]: https://requires.io/github/noracami/321/requirements/?branch=master
 
 build LINE BOT API server with Django.
 
